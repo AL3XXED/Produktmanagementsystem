@@ -21,7 +21,6 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetCombinedProducts()
     {
-        // 1. Eigene Produkte aus DB holen
         var localProducts = await _db.Products
             .Select(p => new CombinedProductDto
             {
@@ -35,7 +34,6 @@ public class ProductsController : ControllerBase
             })
             .ToListAsync();
 
-        // 2. Produkte von der FakeStore API holen
         List<CombinedProductDto> externalProducts = new();
         try
         {
@@ -56,11 +54,9 @@ public class ProductsController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Fehlerbehandlung (optional)
             Console.WriteLine("FakeStore API Fehler: " + ex.Message);
         }
 
-        // 3. Kombinieren und zurückgeben
         var combined = localProducts.Concat(externalProducts).ToList();
         return Ok(combined);
     }
