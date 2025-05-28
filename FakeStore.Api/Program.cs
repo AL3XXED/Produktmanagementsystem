@@ -37,6 +37,7 @@ namespace FakeStore.Api
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 db.Database.EnsureCreated();
+                SeedData.Seed(db);
             }
 
             // 6. Dev-spezifisches Setup

@@ -1,14 +1,23 @@
-import './assets/main.css'
+import './assets/main.css';
+import './assets/styles.css';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
-import App from './App.vue'
-import router from './router'
+import App from './App.vue';
+import router from './router';
 
-const app = createApp(App)
+import axios from 'axios';
+import authService from '@/services/authService';
 
-app.use(createPinia())
-app.use(router)
+const token = authService.getToken();
+if (token) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
 
-app.mount('#app')
+const app = createApp(App);
+
+app.use(createPinia());
+app.use(router);
+
+app.mount('#app');

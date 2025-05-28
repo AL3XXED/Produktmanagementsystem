@@ -14,14 +14,14 @@
     <div v-else-if="error" class="status error">{{ error }}</div>
 
     <div v-else class="product-grid">
-      <div
+      <div class="product-wrapper"
         v-for="product in filteredProducts"
         :key="product.id"
-        class="product-wrapper"
       >
         <ProductCard :product="product" />
         <div class="admin-buttons">
-          <router-link :to="`/edit/${product.id}`">✏️ Bearbeiten</router-link>
+          <router-link
+            v-if="product.source === 'local'":to="`/edit/${product.id}`">✏️ Bearbeiten</router-link>
           <button @click="deleteProduct(product.id)">🗑️ Löschen</button>
         </div>
       </div>
@@ -84,36 +84,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 2rem;
-}
-.create-button {
-  display: inline-block;
-  margin: 1rem 0;
-  padding: 0.5rem 1rem;
-  background-color: #007b5e;
-  color: white;
-  border-radius: 8px;
-  text-decoration: none;
-}
-.search {
-  display: block;
-  margin-bottom: 1.5rem;
-  padding: 0.5rem;
-  width: 100%;
-  max-width: 400px;
-}
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-.admin-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.5rem;
-}
-</style>
+

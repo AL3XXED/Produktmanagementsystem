@@ -41,27 +41,3 @@
   };
   </script>
   
-  <style scoped>
-  .detail {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 1rem;
-  }
-  
-  .detail-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .back-btn {
-    margin-bottom: 1rem;
-    background: none;
-    border: none;
-    color: #007b5e;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-  </style>
-  

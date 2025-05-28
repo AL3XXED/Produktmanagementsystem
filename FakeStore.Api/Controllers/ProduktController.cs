@@ -1,5 +1,6 @@
 ﻿using FakeStore.Api.Data;
 using FakeStore.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,7 +43,7 @@ public class ProductsController : ControllerBase
             {
                 externalProducts = response.Select(p => new CombinedProductDto
                 {
-                    Id = p.Id,
+                    Id = 9999 + p.Id,
                     Title = p.Title,
                     Category = p.Category,
                     Price = p.Price,
@@ -60,4 +61,45 @@ public class ProductsController : ControllerBase
         var combined = localProducts.Concat(externalProducts).ToList();
         return Ok(combined);
     }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> CreateProduct([FromBody] Product product)
+    {
+        _db.Products.Add(product);
+        await _db.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetCombinedProducts), new { id = product.Id }, product);
+    }
+
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product updated)
+    {
+        var existing = await _db.Products.FindAsync(id);
+        if (existing == null)
+            return NotFound();
+
+        existing.Name = updated.Name;
+        existing.Category = updated.Category;
+        existing.Price = updated.Price;
+        existing.Description = updated.Description;
+        existing.ImageUrl = updated.ImageUrl;
+
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        var existing = await _db.Products.FindAsync(id);
+        if (existing == null)
+            return NotFound();
+
+        _db.Products.Remove(existing);
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
+
 }

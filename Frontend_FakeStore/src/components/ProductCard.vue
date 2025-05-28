@@ -1,7 +1,12 @@
 <template>
   <router-link :to="`/product/${product.id}`" class="card-link">
     <div class="product-card">
-      <img :src="product.image" :alt="product.title" class="product-image" />
+      <img
+        :src="product.image"
+        :alt="product.title"
+        class="product-image"
+        @error="onImageError"
+      />
       <h2 class="product-title">{{ product.title }}</h2>
       <p class="product-price">€{{ product.price.toFixed(2) }}</p>
       <p class="product-category">📂 {{ product.category }}</p>
@@ -28,6 +33,11 @@ export default {
       required: true,
     },
   },
+  methods: {
+    onImageError(e) {
+      e.target.src= "/Images/404.png";
+    }
+  }
 };
 </script>
 
