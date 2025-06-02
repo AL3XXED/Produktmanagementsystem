@@ -1,5 +1,7 @@
+using System.Text;
 using FakeStore.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FakeStore.Api
 {
@@ -9,14 +11,11 @@ namespace FakeStore.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // 1. Datenbank hinzufügen (EF Core mit SQLite)
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite("Data Source=app.db"));
 
-            // 2. HTTP Client (für fakestoreapi.com)
             builder.Services.AddHttpClient();
 
-            // 3. CORS aktivieren (wichtig für React-Frontend!)
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigins",
@@ -25,14 +24,30 @@ namespace FakeStore.Api
                                     .AllowAnyHeader());
             });
 
-            // 4. Controller + Swagger
+            builder.Services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = "fakestore",
+                        ValidAudience = "fakestore-client",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey12345"))
+                    };
+                });
+
+            builder.Services.AddAuthorization();
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // 5. DB automatisch erstellen beim Start (optional, für lokale Entwicklung)
+
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -40,18 +55,17 @@ namespace FakeStore.Api
                 SeedData.Seed(db);
             }
 
-            // 6. Dev-spezifisches Setup
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            // 7. HTTPS, CORS, Auth, Routing
             app.UseHttpsRedirection();
 
             app.UseCors("AllowAllOrigins");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
