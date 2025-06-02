@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      products: [],
+      products: [],         // bleibt Array
       loading: true,
       error: null,
       searchQuery: "",
@@ -48,6 +48,11 @@ export default {
   },
   computed: {
     filteredProducts() {
+      // Sicherheit: nur filtern, wenn Array vorhanden ist
+      if (!Array.isArray(this.products)) {
+        return [];
+      }
+
       const q = this.searchQuery.toLowerCase();
       return this.products.filter(
         (p) =>
@@ -58,9 +63,14 @@ export default {
   },
   async mounted() {
     try {
-      this.products = await productService.fetchProducts();
+      const result = await productService.fetchProducts();
+
+      console.log("Produkte geladen:", result);
+      this.products = Array.isArray(result) ? result : [];
     } catch (err) {
       this.error = err.message;
+      console.error("Fehler beim Laden der Produkte:", err);
+      this.products = [];  // auch hier als Fallback: leeres Array
     } finally {
       this.loading = false;
     }
@@ -83,5 +93,6 @@ export default {
   },
 };
 </script>
+
 
 
