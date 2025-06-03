@@ -10,14 +10,16 @@ const fetchProducts = async () => {
   }
 }
 const createProduct = async (product) => {
-  try {
-    const response = await axiosInstance.post("products", product);
-    return response.data;
-  } catch (error) {
-    console.error("Error creating product:", error);
-    throw error;
-  }
-}
+  const requestDto = {
+    name: product.title,
+    category: product.category,
+    price: product.price,
+    description: product.description,
+    imageUrl: product.image
+  };
+  const response = await axiosInstance.post("products", requestDto);
+  return response.data;
+};
 const updateProduct = async (id, product) => {
   try {
     const response = await axiosInstance.put(`products/${id}`, product);

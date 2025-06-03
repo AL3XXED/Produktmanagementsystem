@@ -3,7 +3,7 @@ import ProductList from "@/views/ProductList.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import ProductForm from "@/views/ProductForm.vue";
 import LoginView from "@/views/LoginView.vue";
-import authService from "../services/authService"; // <-- Achtung: relativer Import da dein router unter /src/router liegt
+import authService from "../services/authService"; 
 
 const routes = [
   { path: "/", component: ProductList },

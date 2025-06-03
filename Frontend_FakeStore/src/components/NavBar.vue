@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar">
       <div class="nav-left">
-        <router-link class="logo" to="/">🛒 FakeStore</router-link>
+        <router-link class="logo" to="/"> FakeStore</router-link>
       </div>
   
       <div class="nav-right">

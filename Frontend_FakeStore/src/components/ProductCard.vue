@@ -1,16 +1,10 @@
 <template>
   <router-link :to="`/product/${product.id}`" class="card-link">
     <div class="product-card">
-      <img
-        :src="product.image"
-        :alt="product.title"
-        class="product-image"
-        @error="onImageError"
-      />
+      <img :src="product.image" :alt="product.title" class="product-image" />
       <h2 class="product-title">{{ product.title }}</h2>
       <p class="product-price">€{{ product.price.toFixed(2) }}</p>
       <p class="product-category">📂 {{ product.category }}</p>
-      <p class="product-description">{{ product.description }}</p>
       <span
         class="product-source"
         :class="{
@@ -23,6 +17,7 @@
     </div>
   </router-link>
 </template>
+
 
 <script>
 export default {

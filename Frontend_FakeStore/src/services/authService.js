@@ -42,10 +42,16 @@ const getUser = () => {
   return decoded?.unique_name || decoded?.name || null;
 };
 
+const isAdmin = () => {
+  const user = getUser();
+  return user === "admin";
+};
+
 export default {
   login,
   logout,
   getToken,
   isLoggedIn,
   getUser,
+  isAdmin,
 };

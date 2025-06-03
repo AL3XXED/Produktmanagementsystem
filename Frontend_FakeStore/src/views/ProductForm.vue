@@ -3,26 +3,33 @@
     <h2>{{ isEdit ? "Produkt bearbeiten" : "Neues Produkt erstellen" }}</h2>
 
     <form @submit.prevent="submitForm">
-      <div v-for="(field, key) in form" :key="key" class="form-group">
-        <label :for="key">{{ labels[key] }}</label>
-        <input
-          v-if="key !== 'description'"
-          :type="key === 'price' ? 'number' : 'text'"
-          :id="key"
-          v-model="form[key]"
-          :class="{ invalid: errors[key] }"
-        />
-        <textarea
-          v-else
-          :id="key"
-          v-model="form[key]"
-          :class="{ invalid: errors[key] }"
-        />
-        <small v-if="errors[key]" class="error-msg">{{ errors[key] }}</small>
+      <div class="form-group">
+        <label for="title">Titel</label>
+        <input id="title" v-model="form.title" required />
       </div>
 
-      <button :disabled="loading">
-        {{ loading ? "Speichere..." : isEdit ? "Aktualisieren" : "Erstellen" }}
+      <div class="form-group">
+        <label for="category">Kategorie</label>
+        <input id="category" v-model="form.category" required />
+      </div>
+
+      <div class="form-group">
+        <label for="price">Preis</label>
+        <input id="price" type="number" v-model="form.price" min="0" required />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Beschreibung</label>
+        <textarea id="description" v-model="form.description"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="image">Bild-URL</label>
+        <input id="image" v-model="form.image" />
+      </div>
+
+      <button type="submit" :disabled="loading">
+        {{ loading ? "Speichern..." : (isEdit ? "Aktualisieren" : "Erstellen") }}
       </button>
 
       <p v-if="success" class="success-msg">✔️ Produkt gespeichert!</p>
@@ -49,21 +56,13 @@ export default {
         description: "",
         image: "",
       },
-      errors: {},
-      labels: {
-        title: "Titel",
-        category: "Kategorie",
-        price: "Preis (€)",
-        description: "Beschreibung",
-        image: "Bild-URL",
-      },
     };
   },
   async created() {
     if (this.id) {
       this.isEdit = true;
-      const all = await productService.fetchProducts();
-      const product = all.find((p) => String(p.id) === this.id && p.source === "local");
+      const products = await productService.fetchProducts();
+      const product = products.find((p) => String(p.id) === this.id && p.source === "local");
 
       if (product) {
         this.form = {
@@ -77,18 +76,7 @@ export default {
     }
   },
   methods: {
-    validate() {
-      const e = {};
-      if (!this.form.title) e.title = "Titel erforderlich";
-      if (!this.form.category) e.category = "Kategorie erforderlich";
-      if (this.form.price === null || this.form.price < 0) e.price = "Preis muss ≥ 0 sein";
-      if (!this.form.image) e.image = "Bild-URL erforderlich";
-      return e;
-    },
     async submitForm() {
-      this.errors = this.validate();
-      if (Object.keys(this.errors).length > 0) return;
-
       this.loading = true;
       this.success = false;
       this.submitError = null;
